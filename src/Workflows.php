@@ -406,7 +406,7 @@ class Workflows
      * @return string
      * @throws \Exception
      */
-    private function determineFullPathFor($filename)
+    protected function determineFullPathFor($filename)
     {
         if (file_exists($this->path . DIRECTORY_SEPARATOR . $filename)) {
             return $this->path . DIRECTORY_SEPARATOR . $filename;
@@ -426,7 +426,7 @@ class Workflows
      * @param string|null $a - Associative array
      * @return boolean
      */
-    private function emptyFilter($a)
+    protected function emptyFilter($a)
     {
         if ($a == '' || $a == null) {                        // if $a is empty or null
             return false;                                    // return false, else, return true
@@ -469,7 +469,7 @@ class Workflows
      * @return integer
      * @throws \Exception
      */
-    private function getAlfredVersion()
+    protected function getAlfredVersion()
     {
         $applicationFolder = '/Applications';
         if (file_exists($applicationFolder . '/Alfred 2.app')) {
@@ -485,7 +485,7 @@ class Workflows
      * @param $key string
      * @param $value mixed
      */
-    private function writeToPList($fullPath, $key, $value)
+    protected function writeToPList($fullPath, $key, $value)
     {
         exec(sprintf('defaults write "%s" "%s" %s"', $fullPath, $key, $value));
     }
