@@ -186,7 +186,7 @@ class Workflows
                         $c->addAttribute('valid', $result[$key]);
                     }
                 } elseif ($key == 'autocomplete') {
-                    if ($result[$key] === null || $result[$key] === '') {
+                    if ($result[$key] === null) {
                         continue;
                     } else {
                         $c->addAttribute('autocomplete', $result[$key]);
