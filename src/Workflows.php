@@ -258,7 +258,9 @@ class Workflows
 
         // Execute system call to read plist value
         $output = [];
-        exec("defaults read '${fullPath}' ${propertyToRead}", $output);
+        exec( sprintf( 'defaults read %s %s',
+            escapeshellarg( $fullPath ),
+            escapeshellarg( $propertyToRead ) ), $output );
 
         // @todo change this into an exception
         if (empty($output)) {
@@ -541,6 +543,9 @@ class Workflows
      */
     protected function writeToPList($fullPath, $key, $value)
     {
-        exec(sprintf('defaults write "%s" "%s" %s"', $fullPath, $key, $value));
+        exec( sprintf( 'defaults write %s %s %s',
+            escapeshellarg( $fullPath ),
+            escapeshellarg( $key ),
+            escapeshellarg( $value ) ) );
     }
 }
