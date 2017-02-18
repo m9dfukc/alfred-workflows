@@ -315,12 +315,27 @@ class Workflows
      * Description:
      * Allows searching the local hard drive using mdfind
      *
-     * @param string $query - search string
+     * @param string $query - search parameters
+     * @param bool $simpleQuery - if TRUE, $query is auto-escaped and searched for as a general search,
+     *                            but if FALSE, you can pass any argument to mdfind (but then it's YOUR
+     *                            job to properly escape those command line parameters!).
      * @return array - array of search results
      */
-    public function mdfind($query)
+    public function mdfind(
+        string $query,
+        $simpleQuery = TRUE )
     {
-        exec('mdfind "' . $query . '"', $results);
+        // We will redirect any errors to /dev/null to discard them,
+        // otherwise they would be passed through to the output by PHP.
+        $shellCmd = sprintf(
+            'mdfind %s 2>/dev/null',
+            ( $simpleQuery
+              ? escapeshellarg( $query )
+              : $query ) );
+
+        // Return all lines of the system call.
+        // Note that exec() never includes trailing whitespace on any lines!
+        exec( $shellCmd, $results );
         return $results;
     }
 
