@@ -345,6 +345,45 @@ class Workflows
 
     /**
      * Description:
+     * Safely writes new contents to a file using an atomic two-step process.
+     * If the script is killed before the write is complete, only the temporary
+     * trash file will be corrupted. That's very important, since Alfred might
+     * kill a script earlier than its completion. This function also supports
+     * writing arrays to disk, in which case it serializes it to JSON first.
+     *
+     * @param string $filename - filename to write the data to
+     * @param mixed $data - data to write to file; if it is an array, it will
+     *                      be automatically JSON-encoded before writing to disk
+     * @param string $atomicSuffix - lets you optionally provide a different
+     *                               suffix for the temporary file
+     * @return mixed - number of bytes written on success, otherwise FALSE
+     */
+    public function atomicwrite(
+        string $filename,
+        $data,
+        string $atomicSuffix = 'atomictmp' )
+    {
+        // Handle JSON serialization if necessary.
+        if( is_array( $data ) ) {
+            $data = json_encode( $data );
+        }
+
+        // Perform an exclusive (locked) overwrite to a temporary file.
+        $filenameTmp = sprintf( '%s.%s', $filename, $atomicSuffix );
+        $writeResult = file_put_contents( $filenameTmp, $data, LOCK_EX );
+        if( $writeResult !== FALSE ) {
+            // Now move the file to its real destination (replaced if exists).
+            $moveResult = rename( $filenameTmp, $filename );
+            if( $moveResult === TRUE ) {
+                // Successful write and move. Return number of bytes written.
+                return $writeResult;
+            }
+        }
+        return FALSE; // Failed.
+    }
+
+    /**
+     * Description:
      * Returns data from a local cache file
      *
      * @param string $filename filename to read the cache data from
