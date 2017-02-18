@@ -1,5 +1,5 @@
 {
-    "name": "catharsisjelly/alfred-workflows",
+    "name": "stevejobzniak/alfred-workflows",
     "description": "Workflow class for AlfredApp",
     "authors": [
         {
@@ -9,6 +9,9 @@
         {
             "name": "Chris Lock",
             "email": "code@catharsis.co.uk"
+        },
+        {
+            "name": "SteveJobzniak"
         }
     ],
     "require": {},
