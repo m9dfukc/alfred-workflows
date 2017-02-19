@@ -246,25 +246,31 @@ class Workflows
      * Description:
      * Read a value from the specified plist
      *
-     * @param $filename - plist to read the values from
-     * @param $propertyToRead - the value to read
-     * @return boolean|string false if not found, string if found
-     * @todo simplify
+     * @param string $filename - plist filename to read the value from
+     * @param string $key - the name of the value to read
+     * @throws \Exception If the value could not be read.
+     * @return string The stored value.
      */
-    public function get($filename, $propertyToRead)
+    public function get(
+        string $filename,
+        string $key )
     {
-        // Execute system call to read plist value
-        $output = [];
-        exec( sprintf( 'defaults read %s %s',
-            escapeshellarg( $fullPath ),
-            escapeshellarg( $propertyToRead ) ), $output );
+        // We will redirect any errors to /dev/null to discard them,
+        // otherwise they would be passed through to the output by PHP.
+        $shellCmd = sprintf(
+            'defaults read %s %s 2>/dev/null',
+            escapeshellarg( $filename ),
+            escapeshellarg( $key ) );
 
-        // @todo change this into an exception
-        if (empty($output)) {
-            return false;
+        // Attempt to read the plist value.
+        exec( $shellCmd, $results );
+        if( empty( $results ) ) {
+            throw new \Exception( sprintf( 'Unable to read key "%s" from plist "%s"', $key, $filename ) );
         }
 
-        return $output[0];
+        // Return the first line of the system call.
+        // Note that exec() never includes trailing whitespace on any lines!
+        return $results[0];
     }
 
     /**
