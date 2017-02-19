@@ -4,9 +4,12 @@ namespace AlfredApp;
 
 /**
  * Name:        Workflows
- * Description:    This PHP class object provides several useful functions for retrieving, parsing,
- *                and formatting data to be used with Alfred 2 Workflows.
- * Author:        David Ferguson (@jdfwarrior)
+ * Description: This PHP class object provides several useful functions for
+ *              retrieving, parsing, and formatting data to be used within
+ *              Alfred 2 and 3 Workflows.
+ * Author: @SteveJobzniak (https://github.com/SteveJobzniak)
+ * Author (Various enhancements): @catharsisjelly
+ * Author (Old, super buggy version): David Ferguson (@jdfwarrior)
  */
 class Workflows
 {
