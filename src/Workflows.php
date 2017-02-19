@@ -47,22 +47,30 @@ class Workflows
     /**
      * Description:
      * Class constructor function. Intializes all class variables. Accepts one optional parameter
-     * of the workflow bundle id in the case that you want to specify a different bundle id. This
+     * of the workflow bundle ID in the case that you want to specify a different bundle ID. This
      * would adjust the output directories for storing data.
      *
-     * @param string $bundleId - optional bundle id if not found automatically
+     * @param string $bundleId - optional bundle ID override; if omitted, uses ID from info.plist.
      */
-    public function __construct($bundleId = null)
+    public function __construct(
+        string $bundleId = NULL )
     {
         $this->path = getcwd();
         $this->home = $_SERVER['HOME'];
 
-        if (file_exists(self::INFO_PLIST)) {
-            $this->bundleId = $this->get(self::INFO_PLIST, 'bundleid');
+        // Determine which bundle ID to use for data/cache storage.
+        if( ! empty( $bundleId ) ) {
+            $this->bundleId = $bundleId; // User-provided override.
+        } else {
+            $infoPlistPath = $this->filepath( 'path', self::INFO_PLIST );
+            if( is_file( $infoPlistPath ) ) {
+                $this->bundleId = $this->get( $infoPlistPath, 'bundleid' ); // Info.plist.
+            }
         }
 
-        if (!is_null($bundleId)) {
-            $this->bundleId = $bundleId;
+        // Fallback in case we couldn't determine the bundle ID.
+        if( empty( $this->bundleId ) ) {
+            $this->bundleId = 'com.alfredworkflow.unknownbundleid';
         }
 
         $this->setupCachePath();
