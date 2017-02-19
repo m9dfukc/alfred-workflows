@@ -228,8 +228,7 @@ class Workflows
      */
     public function setFromValue($filename = null, $key = null, $value = null)
     {
-        $fullPath = $this->determineFullPathFor($filename);
-        return $this->writeToPList($fullPath, $key, $value);
+        return $this->writeToPList( $filename, $key, $value );
     }
 
     /**
@@ -254,8 +253,6 @@ class Workflows
      */
     public function get($filename, $propertyToRead)
     {
-        $fullPath = $this->determineFullPathFor($filename);
-
         // Execute system call to read plist value
         $output = [];
         exec( sprintf( 'defaults read %s %s',
@@ -351,13 +348,11 @@ class Workflows
      */
     public function write($filename, $data)
     {
-        $fullPath = $this->determineFullPathFor($filename);
-
         if (is_array($data)) {
             $data = json_encode($data);
         }
 
-        return file_put_contents($fullPath, $data);
+        return file_put_contents( $filename, $data );
     }
 
     /**
@@ -410,8 +405,6 @@ class Workflows
      */
     public function read($filename, $returnAsObject = false)
     {
-        $fullPath = $this->determineFullPathFor($filename);
-
         $contents = file_get_contents($fullPath);
         if ($contents) {
             $decoded = json_decode($contents, $returnAsObject);
@@ -455,24 +448,6 @@ class Workflows
         array_push($this->results, $temp);
 
         return $temp;
-    }
-
-    /**
-     * @param string $filename
-     * @return string
-     * @throws \Exception
-     */
-    protected function determineFullPathFor($filename)
-    {
-        if (file_exists($this->path . DIRECTORY_SEPARATOR . $filename)) {
-            return $this->path . DIRECTORY_SEPARATOR . $filename;
-        } elseif (file_exists($this->dataPath . DIRECTORY_SEPARATOR . $filename)) {
-            return $this->dataPath . DIRECTORY_SEPARATOR . $filename;
-        } elseif (file_exists($this->cachePath . DIRECTORY_SEPARATOR . $filename)) {
-            return $this->cachePath . DIRECTORY_SEPARATOR . $filename;
-        }
-
-        throw new \Exception(sprintf('Unable to determine fullPath for %s', $filename));
     }
 
     /**
