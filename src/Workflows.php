@@ -140,6 +140,53 @@ class Workflows
 
     /**
      * Description:
+     * Constructs a full file path to a file within any of the available basic
+     * folders for your workflow. The file doesn't have to exist yet, and will
+     * not be created by this function. So you can construct paths for files
+     * that you only intend to create later.
+     *
+     * @param string $baseFolder Any of 'cache' (used for temporary caching),
+     *                           'data' (used for permanent settings and data
+     *                           storage), 'path' (the current working path
+     *                           of the script; Alfred sets this to the
+     *                           installed workflow's top level folder),
+     *                           'home' (the user's home folder).
+     * @param string $baseName The filename to append to the folder path. Can
+     *                         contain slashes for subfolders if you want to.
+     * @throws \Exception If the path couldn't be discovered or your filename
+     *                    value is empty.
+     * @return string The complete path to the file.
+     */
+    public function filepath(
+        string $baseFolder,
+        string $baseName )
+    {
+        // Determine which path they wanted.
+        $discoveredPath = NULL;
+        switch( $baseFolder ) {
+        case 'cache':
+        case 'data':
+        case 'path':
+        case 'home':
+            // Executes cache(), data(), path() or home().
+            $discoveredPath = $this->{$baseFolder}();
+            break;
+        }
+
+        // Abort if we didn't find any valid path or no baseName provided.
+        if( empty( $discoveredPath ) ) {
+            throw new \Exception( sprintf( 'Unable to determine folder path for %s', $discoveredPath ) );
+        }
+        if( $baseName === NULL || $baseName === '' ) {
+            throw new \Exception( 'You are not allowed to provide an empty filename' );
+        }
+
+        // Now just construct the complete filename path.
+        return $discoveredPath . DIRECTORY_SEPARATOR . $baseName;
+    }
+
+    /**
+     * Description:
      * Returns an array of available result items
      *
      * @return array - list of result items
