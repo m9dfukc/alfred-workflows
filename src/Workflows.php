@@ -79,63 +79,63 @@ class Workflows
 
     /**
      * Description:
-     * Accepts no parameter and returns the value of the bundle id for the current workflow.
-     * If no value is available, then false is returned.
+     * Gets the bundle ID for the current workflow.
      *
-     * @return string|false if not available, bundle id value if available.
+     * @return mixed The bundle ID string if available, otherwise FALSE.
      */
     public function bundle()
     {
-        return (is_null($this->bundleId) ? false : $this->bundleId);
+        return (is_null($this->bundleId) ? FALSE : $this->bundleId);
     }
 
     /**
      * Description:
-     * Accepts no parameter and returns the value of the path to the cache directory for your
-     * workflow if it is available. Returns false if the value isn't available.
+     * Gets the path to the cache directory for your workflow.
      *
-     * @return string|false if not available, path to the cache directory for your workflow if available.
+     * @return mixed Path to the cache directory for your workflow if available,
+     * otherwise FALSE.
      */
     public function cache()
     {
-        return $this->cachePath ?: false;
+        return $this->cachePath ?: FALSE;
     }
 
     /**
      * Description:
-     * Accepts no parameter and returns the value of the path to the storage directory for your
-     * workflow if it is available. Returns false if the value isn't available.
+     * Gets the path to the storage directory for your workflow.
      *
-     * @return string|false if not available, path to the storage directory for your workflow if available.
+     * @return mixed Path to the storage directory for your workflow if
+     * available, otherwise FALSE.
      */
     public function data()
     {
-        return $this->dataPath ?: false;
+        return $this->dataPath ?: FALSE;
     }
 
     /**
      * Description:
-     * Accepts no parameter and returns the value of the path to the current directory for your
-     * workflow if it is available. Returns false if the value isn't available.
+     * Gets the script's working directory (from moment of class instantiation).
+     * The working directory may have changed later, if you told PHP to do so,
+     * and in that case it WON'T be reflected in this value!
      *
-     * @param none
-     * @return string|false if not available, path to the current directory for your workflow if available.
+     * @return mixed Path to the initial working directory for your workflow if
+     * available, otherwise FALSE.
      */
     public function path()
     {
-        return $this->path ?: false;
+        return $this->path ?: FALSE;
     }
 
     /**
      * Description:
-     * Accepts no parameter and returns the value of the home path for the current user
-     * Returns false if the value isn't available.
+     * Gets the home folder path for the current user.
      *
-     * @return string|false if not available, home path for the current user if available.
+     * @return mixed Path to the current user's home folder if available,
+     * otherwise FALSE.
      */
     public function home()
     {
-        return $this->home ?: false;
+        return $this->home ?: FALSE;
     }
 
     /**
@@ -200,14 +200,14 @@ class Workflows
      * Description:
      * Convert an associative array into XML format
      *
-     * @param array $results - An associative array to convert
+     * @param array $results - An optional associative array to convert instead of the internal array
      * @param string $format - format of data being passed (json or array), defaults to array
      * @return string - XML string representation of the array
      */
-    public function toXml($results = null, $format = 'array')
+    public function toXml($results = NULL, $format = 'array')
     {
         if ($format == 'json') {
-            $results = json_decode($results, true);
+            $results = json_decode($results, TRUE);
         }
 
         if (is_null($results)) {
@@ -215,15 +215,15 @@ class Workflows
         }
 
         if (empty($results)) {
-            return false;
+            return FALSE;
         }
 
-        $items = new \SimpleXMLElement("<items></items>");    // Create new XML element
+        $items = new \SimpleXMLElement("<items></items>"); // Create new XML element
 
-        foreach ($results as $result) {                                // Loop through each object in the array
-            $c = $items->addChild('item');                // Add a new 'item' element for each object
-            $c_keys = array_keys($result);                        // Grab all the keys for that item
-            foreach ($c_keys as $key) {                        // For each of those keys
+        foreach ($results as $result) {    // Loop through each object in the array
+            $c = $items->addChild('item'); // Add a new 'item' element for each object
+            $c_keys = array_keys($result); // Grab all the keys for that item
+            foreach ($c_keys as $key) {    // For each of those keys
 
                 if ($key == 'uid') {
                     if ($result[$key] === NULL) {
@@ -245,7 +245,7 @@ class Workflows
                         $c->addAttribute('valid', $result[$key]);
                     }
                 } elseif ($key == 'autocomplete') {
-                    if ($result[$key] === null) {
+                    if ($result[$key] === NULL) {
                         continue;
                     } else {
                         $c->addAttribute('autocomplete', $result[$key]);
@@ -268,8 +268,8 @@ class Workflows
             } // end foreach
         } // end foreach
 
-        return $items->asXML();                                // Return XML string representation of the array
-
+        // Return XML string representation of the array
+        return $items->asXML();
     }
 
     /**
@@ -345,16 +345,16 @@ class Workflows
      * @return string result from curl_exec
      * @deprecated Look into using Client class
      */
-    public function request($url = null, array $options = null)
+    public function request($url = NULL, array $options = NULL)
     {
         if (is_null($url)) {
-            return false;
+            return FALSE;
         }
 
         $defaults = array(                                    // Create a list of default curl options
-            CURLOPT_RETURNTRANSFER => true,                    // Returns the result as a string
+            CURLOPT_RETURNTRANSFER => TRUE,                    // Returns the result as a string
             CURLOPT_URL => $url,                            // Sets the url to request
-            CURLOPT_FRESH_CONNECT => true
+            CURLOPT_FRESH_CONNECT => TRUE
         );
 
         if ($options) {
@@ -409,16 +409,22 @@ class Workflows
 
     /**
      * Description:
-     * Accepts data and a string file name to store data to local file as cache
+     * Accepts data and a string file name to store data in local file. Beware
+     * that this function is DANGEROUS and that you almost always want to
+     * use atomicwrite() instead, for protection against file corruption.
      *
-     * @param string|array $filename - filename to write the cache data to
-     * @param array $data - data to save to file
-     * @return boolean
+     * @param string $filename - filename to write the data to
+     * @param mixed $data - data to write to file; if it is an array, it will
+     *                      be automatically JSON-encoded before writing to disk
+     * @return mixed - number of bytes written on success, otherwise FALSE
      */
-    public function write($filename, $data)
+    public function write(
+        string $filename,
+        $data )
     {
-        if (is_array($data)) {
-            $data = json_encode($data);
+        // Handle JSON serialization if necessary.
+        if( is_array( $data ) ) {
+            $data = json_encode( $data );
         }
 
         return file_put_contents( $filename, $data );
@@ -510,17 +516,18 @@ class Workflows
      * Helper function that just makes it easier to pass values into a function
      * and create an array result to be passed back to Alfred
      *
-     * @param string $uid - the uid of the result, should be unique
-     * @param string $arg - the argument that will be passed on
+     * @param string $uid - a permanent Unique ID of the result, should be
+     *                      unique; use NULL to omit the UID.
+     * @param string $arg - the argument that will be passed; use NULL to omit.
      * @param string $title - The title of the result item
      * @param string $sub - The subtitle text for the result item
      * @param string $icon - the icon to use for the result item
-     * @param boolean $valid - sets whether the result item can be actioned
-     * @param string $auto - the autocomplete value for the result item
-     * @param null $type
-     * @return array - array item to be passed back to Alfred
+     * @param bool $valid - sets whether the result item can be actioned
+     * @param string $auto - autocompletion for the item; use NULL to omit.
+     * @param string $type - special Alfred result types; use NULL to omit.
+     * @return array - array item that will be passed back to Alfred
      */
-    public function result($uid, $arg, $title, $sub, $icon, $valid = true, $auto = null, $type = null)
+    public function result($uid, $arg, $title, $sub, $icon, $valid = TRUE, $auto = NULL, $type = NULL)
     {
         $temp = array(
             'uid' => $uid,
@@ -559,7 +566,7 @@ class Workflows
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     private function setupCachePath()
     {
@@ -570,7 +577,7 @@ class Workflows
                 return mkdir($this->cachePath);
             }
         }
-        return false;
+        return FALSE;
     }
 
     /**
@@ -585,7 +592,7 @@ class Workflows
                 return mkdir($this->dataPath);
             }
         }
-        return false;
+        return FALSE;
     }
 
     /**
