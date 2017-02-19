@@ -53,7 +53,7 @@ class Workflows
      * @param string $bundleId - optional bundle ID override; if omitted, uses ID from info.plist.
      */
     public function __construct(
-        string $bundleId = NULL )
+        $bundleId = NULL )
     {
         $this->path = getcwd();
         $this->home = $_SERVER['HOME'];
@@ -158,8 +158,8 @@ class Workflows
      * @return string The complete path to the file.
      */
     public function filepath(
-        string $baseFolder,
-        string $baseName )
+        $baseFolder,
+        $baseName )
     {
         // Determine which path they wanted.
         $discoveredPath = NULL;
@@ -282,8 +282,8 @@ class Workflows
      * @return string - execution output
      */
     public function set(
-        string $filename,
-        string $key,
+        $filename,
+        $key,
         $value )
     {
         return $this->writeToPList( $filename, $key, $value );
@@ -297,7 +297,7 @@ class Workflows
      * @param array $values
      */
     public function setmulti(
-        string $filename,
+        $filename,
         array $values )
     {
         foreach( $values as $k => &$v ) {
@@ -315,8 +315,8 @@ class Workflows
      * @return string The stored value.
      */
     public function get(
-        string $filename,
-        string $key )
+        $filename,
+        $key )
     {
         // We will redirect any errors to /dev/null to discard them,
         // otherwise they would be passed through to the output by PHP.
@@ -390,7 +390,7 @@ class Workflows
      * @return array - array of search results
      */
     public function mdfind(
-        string $query,
+        $query,
         $simpleQuery = TRUE )
     {
         // We will redirect any errors to /dev/null to discard them,
@@ -419,7 +419,7 @@ class Workflows
      * @return mixed - number of bytes written on success, otherwise FALSE
      */
     public function write(
-        string $filename,
+        $filename,
         $data )
     {
         // Handle JSON serialization if necessary.
@@ -446,9 +446,9 @@ class Workflows
      * @return mixed - number of bytes written on success, otherwise FALSE
      */
     public function atomicwrite(
-        string $filename,
+        $filename,
         $data,
-        string $atomicSuffix = 'atomictmp' )
+        $atomicSuffix = 'atomictmp' )
     {
         // Handle JSON serialization if necessary.
         if( is_array( $data ) ) {
