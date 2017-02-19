@@ -215,30 +215,34 @@ class Workflows
 
     /**
      * Description:
-     * Save values to a specified plist. If the first parameter is an associative
-     * array, then the second parameter becomes the plist file to save to. If the
-     * first parameter is string, then it is assumed that the first parameter is
-     * the label, the second parameter is the value, and the third parameter is
-     * the plist file to save the data to.
+     * Save a single value to a specified plist.
      *
-     * @param array $filename - associative array of values to save
-     * @param string $key - the value of the setting
-     * @param mixed $value - the plist to save the values into
+     * @param string $filename - the full path to the plist to write to
+     * @param string $key - the key of the setting
+     * @param mixed $value - the value of the setting
      * @return string - execution output
      */
-    public function setFromValue($filename = null, $key = null, $value = null)
+    public function set(
+        string $filename,
+        string $key,
+        $value )
     {
         return $this->writeToPList( $filename, $key, $value );
     }
 
     /**
-     * @param string $filename
+     * Description:
+     * Save multiple key-value pairs to a specified plist.
+     *
+     * @param string $filename - the full path to the plist to write to
      * @param array $values
      */
-    public function setFromArray($filename, array $values)
+    public function setmulti(
+        string $filename,
+        array $values )
     {
-        foreach ($values as $k => $v) {
-            $this->setFromValue($filename);
+        foreach( $values as $k => &$v ) {
+            $this->set( $filename, $k, $v );
         }
     }
 
@@ -518,14 +522,16 @@ class Workflows
     }
 
     /**
-     * @param $fullPath string
+     * @param $filename string
      * @param $key string
      * @param $value mixed
      */
-    protected function writeToPList($fullPath, $key, $value)
+    protected function writeToPList($filename, $key, $value)
     {
-        exec( sprintf( 'defaults write %s %s %s',
-            escapeshellarg( $fullPath ),
+        // We will redirect any errors to /dev/null to discard them,
+        // otherwise they would be passed through to the output by PHP.
+        exec( sprintf( 'defaults write %s %s %s 2>/dev/null',
+            escapeshellarg( $filename ),
             escapeshellarg( $key ),
             escapeshellarg( $value ) ) );
     }
