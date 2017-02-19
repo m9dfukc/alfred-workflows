@@ -406,21 +406,43 @@ class Workflows
 
     /**
      * Description:
-     * Returns data from a local cache file
+     * Reads data from a file, and decodes it to an array/object if it's JSON. We look for
+     * the characters { or [ as the first character in the data, to automatically determine
+     * whether we should attempt to decode JSON. If you write non-JSON data starting with
+     * those characters, then you'll trigger a JSON decode attempt, but if it fails (isn't
+     * valid JSON) then you'll still get your raw text instead, exactly as you intended.
      *
-     * @param string $filename filename to read the cache data from
-     * @param boolean $returnAsObject
-     * @return false if the file cannot be found, the file data if found. If the file
-     *            format is json encoded, then a json object is returned.
+     * @param string $filename filename to read the data from
+     * @param bool $getJsonAsArray optionally set set this to FALSE to return an object
+     *                             instead of an array, whenever JSON-data is decoded.
+     * @return FALSE if the file cannot be found, otherwise file data if found. If the file
+     *            format was json encoded, then a json array (or object) is returned if the
+     *            data was successfully decoded. otherwise the raw file data is returned.
      */
-    public function read($filename, $returnAsObject = false)
+    public function read(
+        $filename,
+        $getJsonAsArray = TRUE )
     {
-        $contents = file_get_contents($fullPath);
-        if ($contents) {
-            $decoded = json_decode($contents, $returnAsObject);
-            return is_null($decoded) ? false : $decoded;
+        $contents = file_get_contents( $filename );
+        if( $contents !== FALSE ) {
+            $firstChar = $contents[0];
+            if( $firstChar == '{' || $firstChar == '[' ) {
+                // Possible JSON data. Attempt decode.
+                $decoded = @json_decode( $contents, $getJsonAsArray );
+                if( $decoded !== NULL ) {
+                    // Successful JSON decoding!
+                    return $decoded;
+                } else {
+                    // Isn't valid JSON data. Return the raw contents instead.
+                    return $contents;
+                }
+            } else {
+                // Contents are DEFINITELY not JSON. Return the raw contents.
+                return $contents;
+            }
         } else {
-            return false;
+            // Failed to read file.
+            return FALSE;
         }
     }
 
