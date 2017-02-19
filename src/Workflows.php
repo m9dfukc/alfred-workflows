@@ -488,17 +488,18 @@ class Workflows
 
     /**
      * Description:
-     * Remove all items from an associative array that do not have a value
+     * Array filter function used for removing all items that do not have a value
      *
-     * @param string|null $a - Associative array
-     * @return boolean
+     * @param mixed $value - an array value
+     * @return bool
      */
-    protected function emptyFilter($a)
+    protected function emptyFilter(
+        $value )
     {
-        if ($a == '' || $a == null) {                        // if $a is empty or null
-            return false;                                    // return false, else, return true
+        if( $value === '' || $value === NULL ) {
+            return FALSE; // Delete.
         } else {
-            return true;
+            return TRUE; // Keep.
         }
     }
 
