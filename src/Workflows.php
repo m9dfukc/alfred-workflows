@@ -171,14 +171,18 @@ class Workflows
             foreach ($c_keys as $key) {                        // For each of those keys
 
                 if ($key == 'uid') {
-                    if ($result[$key] === null || $result[$key] === '') {
+                    if ($result[$key] === NULL) {
                         continue;
                     } else {
                         $c->addAttribute('uid', $result[$key]);
                     }
                 } elseif ($key == 'arg') {
-                    $c->addAttribute('arg', $result[$key]);
-                    $c->$key = $result[$key];
+                    if ($result[$key] === NULL) {
+                        continue;
+                    } else {
+                        $c->addAttribute('arg', $result[$key]);
+                        $c->$key = $result[$key];
+                    }
                 } elseif ($key == 'type') {
                     $c->addAttribute('type', $result[$key]);
                 } elseif ($key == 'valid') {
