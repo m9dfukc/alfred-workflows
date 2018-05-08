@@ -1,5 +1,7 @@
 # Workflows Utility Class
 
+*** Archives Steve Jobzniak's Alfred Workflows ***
+
 Forked, extended and rewritten by @SteveJobzniak ([profile](https://github.com/SteveJobzniak)).
 
 Several nice enhancements and fixes by @catharsisjelly.
@@ -143,7 +145,7 @@ Result:
 
 ### toXml()
 
-Accepts a properly formatted array or JSON object and converts it to XML for creating Alfred feedback results. Both parameters are optional. If results have been created using the result() function, then passing no arguments will use the array of results created using the result() function. Arrays passed in must be an associative array with array key values for the following required values: uid, arg, title, subtitle and icon. You may also pass array key-value pairs for the following optional keys: valid and autocomplete. 
+Accepts a properly formatted array or JSON object and converts it to XML for creating Alfred feedback results. Both parameters are optional. If results have been created using the result() function, then passing no arguments will use the array of results created using the result() function. Arrays passed in must be an associative array with array key values for the following required values: uid, arg, title, subtitle and icon. You may also pass array key-value pairs for the following optional keys: valid and autocomplete.
 
 Example with result() function:
 
@@ -360,7 +362,7 @@ Result:
 
 ```php
 array (
-  0 => 
+  0 =>
   array (
     'uid' => NULL,
     'arg' => 'argument',
