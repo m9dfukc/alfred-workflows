@@ -609,6 +609,8 @@ class Workflows
             return 2;
         } elseif (file_exists($applicationFolder . '/Alfred 3.app')) {
             return 3;
+        } elseif (file_exists($applicationFolder . '/Alfred 4.app')) {
+            return 4;
         }
         throw new \Exception("Unable to determine which Alfred version you are using");
     }
