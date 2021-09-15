@@ -14,7 +14,8 @@ namespace AlfredApp;
 class Workflows
 {
     const PATH_CACHE = "/Library/Caches/com.runningwithcrayons.Alfred-%d/Workflow Data/";
-    const PATH_DATA = "/Library/Application Support/Alfred %d/Workflow Data/";
+    const PATH_DATA = "/Library/Application Support/Alfred/Workflow Data/";
+    const PATH_DATA_LEGACY = "/Library/Application Support/Alfred %d/Workflow Data/";
     const INFO_PLIST = "info.plist";
 
     /**
@@ -590,7 +591,8 @@ class Workflows
     {
         if ($this->bundleId) {
             $version = $this->getAlfredVersion();
-            $this->dataPath = sprintf($this->home . self::PATH_DATA . $this->bundleId, $version);
+            $path = $version < 4 ? self::PATH_DATA_LEGACY : self::PATH_DATA;
+            $this->dataPath = sprintf($this->home . $path . $this->bundleId, $version);
             if (!file_exists($this->dataPath)) {
                 return mkdir($this->dataPath);
             }
